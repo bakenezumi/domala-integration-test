@@ -13,7 +13,8 @@ lazy val root = (project in file(".")).settings(
     "org.scalameta" %% "scalameta" % "1.8.0" % Provided,
     "com.typesafe" % "config" % "1.3.1" % Test,
     "org.scalatest" %% "scalatest" % "3.0.4" % Test,
-    "mysql" % "mysql-connector-java" % "5.1.29" % Test,
+    "com.h2database" % "h2" % "1.4.196" % Test,
+    "mysql" % "mysql-connector-java" % "5.1.29",
     "org.postgresql" % "postgresql" % "9.4.1212" % Test
   )
 )
