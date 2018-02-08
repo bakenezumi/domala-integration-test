@@ -21,7 +21,7 @@ select *
 from person
 where id = /*id*/0
   """)
-  def selectById(id: Int): Option[Person]
+  def selectById(id: ID[Person]): Option[Person]
 
   @Select(sql = """
 select count(*)
@@ -41,7 +41,7 @@ select *
 from person
 where id = /*id*/0
   """)
-  def selectByIdNullable(id: Int): Person
+  def selectByIdNullable(id: ID[Person]): Person
 
   @Select(sql = """
 select
@@ -57,7 +57,7 @@ from
 where
     p.id = /*id*/0
   """)
-  def selectWithDepartmentById(id: Int): Option[PersonDepartment]
+  def selectWithDepartmentById(id: ID[Person]): Option[PersonDepartment]
 
   @Select(sql = """
 select
@@ -74,21 +74,21 @@ where
     p.id = /*id*/0
   """)
   def selectWithDepartmentEmbeddedById(
-      id: Int): Option[PersonDepartmentEmbedded]
+      id: ID[Person]): Option[PersonDepartmentEmbedded]
 
   @Select(sql = """
 select *
 from person
   """,
           strategy = SelectType.STREAM)
-  def selectAllStream(f: Stream[Person] => Int): Int
+  def selectAllStream[T](f: Stream[Person] => T): T
 
   @Select(sql = """
 select *
 from person
   """,
           strategy = SelectType.ITERATOR)
-  def selectAllIterator(f: Iterator[Person] => Int): Int
+  def selectAllIterator[T](f: Iterator[Person] => T): T
 
   @Select(sql = """
 select *
@@ -97,8 +97,7 @@ where
     id = /*id*/0
   """,
           strategy = SelectType.STREAM)
-  def selectByIdStream(id: Int)(
-      f: Stream[Person] => Option[Address]): Option[Address]
+  def selectByIdStream[T](id: ID[Person])(f: Stream[Person] => T): T
 
   @Select(sql = """
 select *
@@ -107,8 +106,7 @@ where
     id = /*id*/0
   """,
           strategy = SelectType.ITERATOR)
-  def selectByIdIterator(id: Int)(
-      f: Iterator[Person] => Option[Address]): Option[Address]
+  def selectByIdIterator[T](id: ID[Person])(f: Iterator[Person] => T): T
 
   @Select(sql = """
 select *
@@ -123,7 +121,7 @@ from person
 where
     id = /*id*/0
   """)
-  def selectByIdMap(id: Int): Map[String, Any]
+  def selectByIdMap(id: ID[Person]): Map[String, Any]
 
   @Select(sql = """
 select *
@@ -131,7 +129,7 @@ from person
 where
     id = /*id*/0
   """)
-  def selectByIdOptionMap(id: Int): Option[Map[String, Any]]
+  def selectByIdOptionMap(id: ID[Person]): Option[Map[String, Any]]
 
   @Select(sql = """
 select *
@@ -139,7 +137,7 @@ from person
 order by id
   """,
           strategy = SelectType.STREAM)
-  def selectAllStreamMap(f: Stream[Map[String, Any]] => Int): Int
+  def selectAllStreamMap[T](f: Stream[Map[String, Any]] => T): T
 
   @Select(sql = """
 select *
@@ -147,7 +145,7 @@ from person
 order by id
   """,
           strategy = SelectType.ITERATOR)
-  def selectAllIteratorMap(f: Iterator[Map[String, Any]] => Int): Int
+  def selectAllIteratorMap[T](f: Iterator[Map[String, Any]] => T): T
 
   @Select(sql = """
 select name
@@ -155,7 +153,7 @@ from person
 where
     id = /*id*/0
   """)
-  def selectNameById(id: Int): Option[Name]
+  def selectNameById(id: ID[Person]): Option[Name]
 
   @Select(sql = """
 select name
@@ -163,7 +161,7 @@ from person
 where
     id = /*id*/0
   """)
-  def selectNameByIdNullable(id: Int): Name
+  def selectNameByIdNullable(id: ID[Person]): Name
 
   @Select(sql = """
 select name
@@ -178,7 +176,7 @@ from person
 order by id
   """,
           strategy = SelectType.STREAM)
-  def selectNameStream(f: Stream[Name] => Int): Int
+  def selectNameStream[T](f: Stream[Name] => T): T
 
   @Select(sql = """
 select name
@@ -186,16 +184,16 @@ from person
 order by id
   """,
           strategy = SelectType.ITERATOR)
-  def selectNameIterator(f: Iterator[Name] => Int): Int
+  def selectNameIterator[T](f: Iterator[Name] => T): T
 
-  def selectByIDBuilder(id: Int)(implicit config: Config): String = {
+  def selectByIDBuilder(id: ID[Person])(implicit config: Config): String = {
     import org.seasar.doma.jdbc.builder.SelectBuilder
     val builder = SelectBuilder.newInstance(config)
     builder.sql("select")
     builder.sql("name")
     builder.sql("from person")
     builder.sql("where")
-    builder.sql("id =").param(classOf[Int], id)
+    builder.sql("id =").param(classOf[Int], id.value)
     builder.getScalarSingleResult(classOf[String])
   }
 
@@ -206,7 +204,7 @@ order by id
   def update(person: Person): Result[Person]
 
   @Delete
-  def delete(person: Person): Int
+  def delete(person: Person): Result[Person]
 
   @BatchInsert
   def batchInsert(persons: Seq[Person]): BatchResult[Person]
@@ -215,7 +213,7 @@ order by id
   def batchUpdate(persons: Seq[Person]): BatchResult[Person]
 
   @BatchDelete
-  def batchDelete(persons: Seq[Person]): Array[Int]
+  def batchDelete(persons: Seq[Person]): BatchResult[Person]
 
   @Insert(
     sql =
@@ -252,7 +250,7 @@ where
   id = /* entity.id */0 and
   version = /* version */0
   """)
-  def deleteSql(entity: Person, version: Int): Int
+  def deleteSql(entity: Person, version: Int): Result[Person]
 
   @Select(sql = """
 select *
@@ -304,6 +302,6 @@ where
   """,
     batchSize = 100
   )
-  def batchDeleteSql(persons: Seq[Person]): Array[Int]
+  def batchDeleteSql(persons: Seq[Person]): BatchResult[Person]
 
 }

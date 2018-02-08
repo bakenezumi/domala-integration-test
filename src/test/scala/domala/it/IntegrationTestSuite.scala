@@ -27,14 +27,14 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
   test("select by 1 basic parameter to return optional entity") {
     Required {
       assert(
-        dao.selectById(1) == Some(
-          Person(Some(ID(1)),
+        dao.selectById(ID(1)) == Some(
+          Person(ID(1),
                  Some(Name("SMITH")),
                  Some(10),
                  Address("Tokyo", "Yaesu"),
                  Some(2),
                  Some(0))))
-      assert(dao.selectById(5) == None)
+      assert(dao.selectById(ID(5)) == None)
     }
   }
 
@@ -48,13 +48,13 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
     Required {
       assert(
         dao.selectAll == Seq(
-          Person(Some(ID(1)),
+          Person(ID(1),
                  Some(Name("SMITH")),
                  Some(10),
                  Address("Tokyo", "Yaesu"),
                  Some(2),
                  Some(0)),
-          Person(Some(ID(2)),
+          Person(ID(2),
                  Some(Name("ALLEN")),
                  Some(20),
                  Address("Kyoto", "Karasuma"),
@@ -67,21 +67,21 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
   test("select to return nullable entity") {
     Required {
       assert(
-        dao.selectByIdNullable(1) ==
-          Person(Some(ID(1)),
+        dao.selectByIdNullable(ID(1)) ==
+          Person(ID(1),
                  Some(Name("SMITH")),
                  Some(10),
                  Address("Tokyo", "Yaesu"),
                  Some(2),
                  Some(0)))
-      assert(dao.selectByIdNullable(5) == null)
+      assert(dao.selectByIdNullable(ID(5)) == null)
     }
   }
 
   test("join select") {
     Required {
       assert(
-        dao.selectWithDepartmentById(1) ==
+        dao.selectWithDepartmentById(ID(1)) ==
           Some(
             PersonDepartment(ID(1),
                              Name("SMITH"),
@@ -92,7 +92,7 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
 
   test("join select to embedded entity") {
     Required {
-      assert(dao.selectWithDepartmentEmbeddedById(1) ==
+      assert(dao.selectWithDepartmentEmbeddedById(ID(1)) ==
         Some(PersonDepartmentEmbedded(1, "SMITH", Department(ID(2), "SALES"))))
     }
   }
@@ -115,12 +115,12 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
 
   test("select stream with one param") {
     Required {
-      assert(dao.selectByIdStream(1) { stream =>
+      assert(dao.selectByIdStream(ID(1)) { stream =>
         stream.headOption.map(_.address)
       } == Some(Address("Tokyo", "Yaesu")))
       assert(
         dao
-          .selectByIdStream(5) { stream =>
+          .selectByIdStream(ID(5)) { stream =>
             stream.headOption.map(_.address)
           }
           .isEmpty)
@@ -129,12 +129,12 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
 
   test("select iterator with one param") {
     Required {
-      assert(dao.selectByIdIterator(1) { it =>
+      assert(dao.selectByIdIterator(ID(1)) { it =>
         it.toStream.headOption.map(_.address)
       } == Some(Address("Tokyo", "Yaesu")))
       assert(
         dao
-          .selectByIdIterator(5) { it =>
+          .selectByIdIterator(ID(5)) { it =>
             it.toStream.headOption.map(_.address)
           }
           .isEmpty)
@@ -166,7 +166,7 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
   test("select Single Map") {
     Required {
       assert(
-        dao.selectByIdMap(1) ==
+        dao.selectByIdMap(ID(1)) ==
           Map("id" -> 1,
               "name" -> "SMITH",
               "age" -> 10,
@@ -174,14 +174,14 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
               "street" -> "Yaesu",
               "department_id" -> 2,
               "version" -> 0))
-      assert(dao.selectByIdMap(5) == Map.empty)
+      assert(dao.selectByIdMap(ID(5)) == Map.empty)
     }
   }
 
   test("select Option Map") {
     Required {
       assert(
-        dao.selectByIdOptionMap(1) == Some(
+        dao.selectByIdOptionMap(ID(1)) == Some(
           Map("id" -> 1,
               "name" -> "SMITH",
               "age" -> 10,
@@ -189,21 +189,21 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
               "street" -> "Yaesu",
               "department_id" -> 2,
               "version" -> 0)))
-      assert(dao.selectByIdOptionMap(5).isEmpty)
+      assert(dao.selectByIdOptionMap(ID(5)).isEmpty)
     }
   }
 
   test("select option domain") {
     Required {
-      assert(dao.selectNameById(1) == Some(Name("SMITH")))
-      assert(dao.selectNameById(99).isEmpty)
+      assert(dao.selectNameById(ID(1)) == Some(Name("SMITH")))
+      assert(dao.selectNameById(ID(99)).isEmpty)
     }
   }
 
   test("select nullable domain") {
     Required {
-      assert(dao.selectNameByIdNullable(1) == Name("SMITH"))
-      assert(dao.selectNameByIdNullable(99) == Name(null))
+      assert(dao.selectNameByIdNullable(ID(1)) == Name("SMITH"))
+      assert(dao.selectNameByIdNullable(ID(99)) == Name(null))
     }
   }
 
@@ -250,7 +250,7 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
 
   test("select by builder") {
     Required {
-      assert(dao.selectByIDBuilder(1) == "SMITH")
+      assert(dao.selectByIDBuilder(ID(1)) == "SMITH")
     }
   }
 
@@ -263,8 +263,8 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
                departmentId = Some(1)))
       assert(dao.selectCount == 3)
       assert(
-        dao.selectById(3) == Some(
-          Person(Some(ID(3)),
+        dao.selectById(ID(3)) == Some(
+          Person(ID(3),
                  Some(Name("aaa")),
                  Some(5),
                  Address("bbb", "ccc"),
@@ -276,16 +276,16 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
   test("update by entity") {
     Required {
       dao.update(
-        Person(id = Some(ID(1)),
+        Person(id = ID(1),
                name = Some(Name("aaa")),
                age = Some(5),
                address = Address("bbb", "ccc"),
                departmentId = Some(2),
                version = Some(0)))
       assert(
-        dao.selectById(1) == Some(
-          Person(Some(ID(1)),
-                 Some(Name("SMITH")), // @Column(updatable = false)
+        dao.selectById(ID(1)) == Some(
+          Person(ID(1),
+                 Some(Name("aaa")),
                  Some(5),
                  Address("bbb", "ccc"),
                  Some(2),
@@ -295,7 +295,7 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
 
   test("delete by entity") {
     Required {
-      dao.selectById(1).foreach(dao.delete)
+      dao.selectById(ID(1)).foreach(dao.delete)
       assert(dao.selectCount() == 1)
     }
   }
@@ -316,13 +316,13 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
       assert(counts sameElements Array(1, 1))
       assert(
         entitys == Seq(
-          Person(Some(ID(3)),
+          Person(ID(3),
                  Some(Name("aaa")),
                  Some(5),
                  Address("bbb", "ccc"),
                  Some(1),
                  Some(1)),
-          Person(Some(ID(4)),
+          Person(ID(4),
                  Some(Name("ddd")),
                  Some(10),
                  Address("eee", "fff"),
@@ -331,16 +331,16 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
         ))
       assert(dao.selectCount == 4)
       assert(
-        dao.selectById(3) == Some(
-          Person(Some(ID(3)),
+        dao.selectById(ID(3)) == Some(
+          Person(ID(3),
                  Some(Name("aaa")),
                  Some(5),
                  Address("bbb", "ccc"),
                  Some(1),
                  Some(1))))
       assert(
-        dao.selectById(4) == Some(
-          Person(Some(ID(4)),
+        dao.selectById(ID(4)) == Some(
+          Person(ID(4),
                  Some(Name("ddd")),
                  Some(10),
                  Address("eee", "fff"),
@@ -358,13 +358,13 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
       assert(counts sameElements Array(1, 1))
       assert(
         entitys == Seq(
-          Person(Some(ID(1)),
+          Person(ID(1),
                  Some(Name("SMITH")),
                  Some(11),
                  Address("Tokyo", "Yaesu"),
                  Some(2),
                  Some(1)),
-          Person(Some(ID(2)),
+          Person(ID(2),
                  Some(Name("ALLEN")),
                  Some(21),
                  Address("Kyoto", "Karasuma"),
@@ -373,13 +373,13 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
         ))
       assert(
         dao.selectAll == Seq(
-          Person(Some(ID(1)),
+          Person(ID(1),
                  Some(Name("SMITH")),
                  Some(11),
                  Address("Tokyo", "Yaesu"),
                  Some(2),
                  Some(1)),
-          Person(Some(ID(2)),
+          Person(ID(2),
                  Some(Name("ALLEN")),
                  Some(21),
                  Address("Kyoto", "Karasuma"),
@@ -400,13 +400,13 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
   test("insert by Sql") {
     Required {
       dao.insertSql(
-        Person(Some(ID(3)),
+        Person(ID(3),
                Some(Name("aaa")),
                Some(5),
                Address("bbb", "ccc"),
                Some(1),
                Some(1)),
-        Person(Some(ID(3)),
+        Person(ID(3),
                Some(Name("ddd")),
                Some(10),
                Address("eee", "fff"),
@@ -416,8 +416,8 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
       )
       assert(dao.selectCount == 3)
       assert(
-        dao.selectById(3) == Some(
-          Person(Some(ID(3)),
+        dao.selectById(ID(3)) == Some(
+          Person(ID(3),
                  Some(Name("aaa")),
                  Some(5),
                  Address("eee", "fff"),
@@ -429,13 +429,13 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
   test("update by Sql") {
     Required {
       dao.updateSql(
-        Person(Some(ID(1)),
+        Person(ID(1),
                Some(Name("aaa")),
                Some(5),
                Address("bbb", "ccc"),
                Some(1),
                Some(1)),
-        Person(Some(ID(3)),
+        Person(ID(3),
                Some(Name("ddd")),
                Some(10),
                Address("eee", "fff"),
@@ -444,8 +444,8 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
         0
       )
       assert(
-        dao.selectById(1) == Some(
-          Person(Some(ID(1)),
+        dao.selectById(ID(1)) == Some(
+          Person(ID(1),
                  Some(Name("aaa")),
                  Some(5),
                  Address("eee", "fff"),
@@ -457,7 +457,7 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
   test("delete by Sql") {
     Required {
       dao.deleteSql(
-        Person(Some(ID(1)),
+        Person(ID(1),
                Some(Name("aaa")),
                Some(5),
                Address("bbb", "ccc"),
@@ -465,7 +465,7 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
                Some(1)),
         0
       )
-      assert(dao.selectById(1).isEmpty)
+      assert(dao.selectById(ID(1)).isEmpty)
     }
   }
 
@@ -474,13 +474,13 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
     Required {
       assert(
         dao.selectAllByOption(options) == Seq(
-          Person(Some(ID(1)),
+          Person(ID[Person](1),
                  Some(Name("SMITH")),
                  Some(10),
                  Address("Tokyo", "Yaesu"),
                  Some(2),
                  Some(0)),
-          Person(Some(ID(2)),
+          Person(ID(2),
                  Some(Name("ALLEN")),
                  Some(20),
                  Address("Kyoto", "Karasuma"),
@@ -491,7 +491,7 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
       options.limit(1).count()
       assert(
         dao.selectAllByOption(options) == Seq(
-          Person(Some(ID(1)),
+          Person(ID(1),
                  Some(Name("SMITH")),
                  Some(10),
                  Address("Tokyo", "Yaesu"),
@@ -506,19 +506,19 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
     Required {
       dao.batchInsertSql(
         Seq(
-          Person(Some(ID(3)),
+          Person(ID(3),
                  Some(Name("aaa")),
                  Some(5),
                  Address("bbb", "ccc"),
                  Some(1),
                  Some(1)),
-          Person(Some(ID(4)),
+          Person(ID(4),
                  Some(Name("ddd")),
                  Some(10),
                  Address("eee", "fff"),
                  Some(1),
                  Some(1)),
-          Person(Some(ID(5)),
+          Person(ID(5),
                  Some(Name("ggg")),
                  Some(15),
                  Address("hhh", "iii"),
@@ -527,24 +527,24 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
         ))
       assert(dao.selectCount == 5)
       assert(
-        dao.selectById(3) == Some(
-          Person(Some(ID(3)),
+        dao.selectById(ID(3)) == Some(
+          Person(ID(3),
                  Some(Name("aaa")),
                  Some(5),
                  Address("bbb", "ccc"),
                  Some(2),
                  Some(1))))
       assert(
-        dao.selectById(4) == Some(
-          Person(Some(ID(4)),
+        dao.selectById(ID(4)) == Some(
+          Person(ID(4),
                  Some(Name("ddd")),
                  Some(10),
                  Address("eee", "fff"),
                  Some(2),
                  Some(1))))
       assert(
-        dao.selectById(5) == Some(
-          Person(Some(ID(5)),
+        dao.selectById(ID(5)) == Some(
+          Person(ID(5),
                  Some(Name("ggg")),
                  Some(15),
                  Address("hhh", "iii"),
@@ -560,13 +560,13 @@ trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {
       dao.batchUpdateSql(entities)
       assert(
         dao.selectAll == Seq(
-          Person(Some(ID(1)),
+          Person(ID(1),
                  Some(Name("SMITH")),
                  Some(20),
                  Address("Tokyo", "Yaesu"),
                  Some(2),
                  Some(1)),
-          Person(Some(ID(2)),
+          Person(ID(2),
                  Some(Name("ALLEN")),
                  Some(30),
                  Address("Kyoto", "Karasuma"),

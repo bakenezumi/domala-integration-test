@@ -15,7 +15,7 @@ trait SelectBenchMarkTestSuite extends FunSuiteLike with BeforeAndAfterAll {
   private[this] val SIZE = 10000
   private[this] val initialEntities = (1 to SIZE).map(
     i =>
-      Person(Some(ID(i)),
+      Person(ID(i),
              Some(Name("name" + i)),
              Some(i * 2),
              Address("city" + i, "street" + i),

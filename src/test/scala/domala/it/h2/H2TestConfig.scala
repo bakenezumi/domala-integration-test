@@ -10,7 +10,9 @@ import org.seasar.doma.jdbc.tx.LocalTransactionDataSource
 class H2TestConfig private (url: String, user: String)
     extends IntegrationTestConfig(
       new LocalTransactionDataSource(url, user, null),
-      new H2Dialect(),
+      new H2Dialect() {
+        override def includesIdentityColumn(): Boolean = false
+      },
       "org.h2.Driver"
     )
 

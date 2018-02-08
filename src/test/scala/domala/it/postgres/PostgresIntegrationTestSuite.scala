@@ -7,5 +7,5 @@ import org.scalatest._
 class PostgresIntegrationTestSuite
     extends IntegrationTestSuite
     with BeforeAndAfter {
-  override val config: Config = PostgresTestConfig.get
+  override implicit val config: Config = PostgresTestConfig.get
 }
