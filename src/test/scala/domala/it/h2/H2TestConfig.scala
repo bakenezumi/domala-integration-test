@@ -20,14 +20,6 @@ object H2TestConfig {
     conf.getString("db.h2.url"),
     conf.getString("db.h2.username"))
 
-  private[this] val forBenchMark = new H2TestConfig(
-    conf.getString("db.h2.url") + "_bench",
-    conf.getString("db.h2.username")) {
-    override def getBatchSize: Int = 1000
-  }
-
   def get: Config = forIntegration
-
-  def getForBenchMark: Config = forBenchMark
 
 }

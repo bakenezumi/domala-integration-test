@@ -21,15 +21,6 @@ object PostgresTestConfig {
     conf.getString("db.postgres.password")
   )
 
-  private[this] val forBenchMark = new PostgresTestConfig(
-    conf.getString("db.postgres.url") + "?currentSchema=bench",
-    conf.getString("db.postgres.username"),
-    conf.getString("db.postgres.password")) {
-    override def getBatchSize: Int = 1000
-  }
-
   def get: PostgresTestConfig = forIntegration
-
-  def getForBenchMark: PostgresTestConfig = forBenchMark
 
 }

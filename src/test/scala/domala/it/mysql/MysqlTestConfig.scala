@@ -20,15 +20,6 @@ object MysqlTestConfig {
     conf.getString("db.mysql.username"),
     conf.getString("db.mysql.password"))
 
-  private[this] val forBenchMark = new MysqlTestConfig(
-    conf.getString("db.mysql.url") + "_bench",
-    conf.getString("db.mysql.username"),
-    conf.getString("db.mysql.password")) {
-    override def getBatchSize: Int = 1000
-  }
-
   def get: Config = forIntegration
-
-  def getForBenchMark: Config = forBenchMark
 
 }
