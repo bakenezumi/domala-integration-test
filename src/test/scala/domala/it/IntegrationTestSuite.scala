@@ -5,7 +5,6 @@ import domala.it.dao._
 import domala.it.entity._
 import domala.it.holder._
 import domala.jdbc.{BatchResult, Config, SelectOptions}
-import org.scalactic.source.Position
 import org.scalatest._
 
 trait IntegrationTestSuite extends FunSuiteLike with BeforeAndAfter {

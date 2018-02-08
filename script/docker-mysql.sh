@@ -1,1 +1,1 @@
-docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -d -p 3306:3306 mysql:5.7.21
+docker run --name domala_it_mysql -e MYSQL_ROOT_PASSWORD=password -d -p 3306:3306 mysql:5.7.21
