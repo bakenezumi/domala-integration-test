@@ -16,11 +16,11 @@ trait SelectBenchMarkTestSuite extends FunSuiteLike with BeforeAndAfterAll {
   private[this] val initialEntities = (1 to SIZE).map(
     i =>
       Person(ID(i),
-             Some(Name("name" + i)),
-             Some(i * 2),
-             Address("city" + i, "street" + i),
-             Some(1),
-             Some(0)))
+             Some(PersonName("name" + i)),
+             Some(Age(i * 2)),
+             Address(CityName("city" + i), StreetName("street" + i)),
+             Some(ID(1)),
+             0))
 
   override def beforeAll(): Unit = {
     Required {

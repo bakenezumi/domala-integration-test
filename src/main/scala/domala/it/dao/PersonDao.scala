@@ -153,7 +153,7 @@ from person
 where
     id = /*id*/0
   """)
-  def selectNameById(id: ID[Person]): Option[Name]
+  def selectNameById(id: ID[Person]): Option[PersonName]
 
   @Select(sql = """
 select name
@@ -161,14 +161,14 @@ from person
 where
     id = /*id*/0
   """)
-  def selectNameByIdNullable(id: ID[Person]): Name
+  def selectNameByIdNullable(id: ID[Person]): PersonName
 
   @Select(sql = """
 select name
 from person
 order by id
   """)
-  def selectNames: Seq[Name]
+  def selectNames: Seq[PersonName]
 
   @Select(sql = """
 select name
@@ -176,7 +176,7 @@ from person
 order by id
   """,
           strategy = SelectType.STREAM)
-  def selectNameStream[T](f: Stream[Name] => T): T
+  def selectNameStream[T](f: Stream[PersonName] => T): T
 
   @Select(sql = """
 select name
@@ -184,7 +184,7 @@ from person
 order by id
   """,
           strategy = SelectType.ITERATOR)
-  def selectNameIterator[T](f: Iterator[Name] => T): T
+  def selectNameIterator[T](f: Iterator[PersonName] => T): T
 
   def selectByIDBuilder(id: ID[Person])(implicit config: Config): String = {
     import org.seasar.doma.jdbc.builder.SelectBuilder

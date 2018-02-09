@@ -1,9 +1,9 @@
 package domala.it.entity
 
-import domala._
+import domala.it.holder.{ID, PersonName}
 
 case class PersonDepartmentEmbedded(
-  id: Int,
-  name: String,
-  department: Department
+    id: ID[Person],
+    name: PersonName,
+    department: Department
 )
